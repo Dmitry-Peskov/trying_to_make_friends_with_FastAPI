@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "trying-to-make-friends-with-fastapi"
+version = "0.1.0"
+description = "Пробуем подружиться / познать возможности FastAPI"
+authors = ["Dmitry-Peskov <dv.peskov@yandex.ru>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
