@@ -8,14 +8,14 @@ from .schemas import EmployeeGet, EmployeeCreate
 employee_router = APIRouter(prefix="/employee", tags=["Сотрудник"])
 
 
-@employee_router.get("/", response_model=list[EmployeeGet])
+@employee_router.get("/", response_model=list[EmployeeGet], summary="Получить всех «Сотрудников»")
 async def get_employees(
         session: AsyncSession = Depends(database.session_dependency)
 ):
     return await crud.get_employees(session=session)
 
 
-@employee_router.post("/", response_model=EmployeeGet)
+@employee_router.post("/", response_model=EmployeeGet, summary="Создать нового «Сотрудника»")
 async def create_employees(
         employee: EmployeeCreate,
         session: AsyncSession = Depends(database.session_dependency)
@@ -23,12 +23,12 @@ async def create_employees(
     return await crud.create_employee(session=session, employee=employee)
 
 
-@employee_router.get("/{user_id}/", response_model=EmployeeGet)
+@employee_router.get("/{user_id}/", response_model=EmployeeGet, summary="Получить «Сотрудника» по его ID")
 async def get_employee_by_id(
         employee_id: int,
         session: AsyncSession = Depends(database.session_dependency)
 ):
-    employee_get = crud.get_employee_by_id(session=session, id=employee_id)
+    employee_get = await crud.get_employee_by_id(session=session, id=employee_id)
     if employee_get is not None:
         return employee_get
     raise HTTPException(

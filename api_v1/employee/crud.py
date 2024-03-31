@@ -13,7 +13,10 @@ async def get_employees(session: AsyncSession) -> list[Employee]:
 
 
 async def get_employee_by_id(session: AsyncSession, id: int) -> Employee | None:
-    return await session.get(Employee, id)
+    stmt = select(Employee).where(Employee.id == id)
+    result: Result = await session.execute(stmt)
+    employee: Employee | None = result.scalar_one_or_none()
+    return employee
 
 
 async def create_employee(session: AsyncSession, employee: EmployeeCreate) -> Employee:
