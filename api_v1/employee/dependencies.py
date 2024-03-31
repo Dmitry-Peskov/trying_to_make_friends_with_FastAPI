@@ -12,7 +12,7 @@ async def employee_by_id(
         employee_id: Annotated[int, Path],
         session: AsyncSession = Depends(database.session_dependency)
 ) -> Employee:
-    employee_get = await crud.get_employee_by_id(session=session, id=employee_id)
+    employee_get = await crud.get_employee_by_id(session=session, employee_id=employee_id)
     if employee_get is not None:
         return employee_get
     raise HTTPException(
