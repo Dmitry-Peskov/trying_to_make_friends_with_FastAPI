@@ -1,9 +1,11 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database import database
+from core.models import Employee
 from . import crud
-from .schemas import EmployeeGet, EmployeeCreate
+from .dependencies import employee_by_id
+from .schemas import EmployeeGet, EmployeeCreate, EmployeeUpdate
 
 employee_router = APIRouter(prefix="/employee", tags=["Сотрудник"])
 
@@ -15,7 +17,7 @@ async def get_employees(
     return await crud.get_employees(session=session)
 
 
-@employee_router.post("/", response_model=EmployeeGet, summary="Создать нового «Сотрудника»")
+@employee_router.post("/", response_model=EmployeeGet, status_code=status.HTTP_201_CREATED, summary="Создать нового «Сотрудника»")
 async def create_employees(
         employee: EmployeeCreate,
         session: AsyncSession = Depends(database.session_dependency)
@@ -23,15 +25,29 @@ async def create_employees(
     return await crud.create_employee(session=session, employee=employee)
 
 
-@employee_router.get("/{user_id}/", response_model=EmployeeGet, summary="Получить «Сотрудника» по его ID")
+@employee_router.get("/{employee_id}/", response_model=EmployeeGet, summary="Получить «Сотрудника» по его ID")
 async def get_employee_by_id(
-        employee_id: int,
+        employee: Employee = Depends(employee_by_id)
+):
+    return employee
+
+
+@employee_router.patch("/{employee_id}/", response_model=EmployeeGet)
+async def update_product(
+        employee_update: EmployeeUpdate,
+        employee_current: Employee = Depends(employee_by_id),
         session: AsyncSession = Depends(database.session_dependency)
 ):
-    employee_get = await crud.get_employee_by_id(session=session, id=employee_id)
-    if employee_get is not None:
-        return employee_get
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Пользователь с id = {employee_id} не найдет в системе"
+    return await crud.update_employee(
+        session=session,
+        employee=employee_current,
+        employee_upd=employee_update
     )
+
+
+@employee_router.delete("/{employee_id}/", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_employee(
+        employee: Employee = Depends(employee_by_id),
+        session: AsyncSession = Depends(database.session_dependency)
+) -> None:
+    await crud.delete_employee(session=session, employee=employee)
