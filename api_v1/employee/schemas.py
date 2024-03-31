@@ -1,4 +1,5 @@
-from typing import Literal
+from datetime import datetime
+from typing import Literal, Optional
 from pydantic import BaseModel, PastDate
 
 
@@ -11,3 +12,16 @@ class EmployeeCreate(BaseModel):
     happy_birthday: PastDate
     group: Groups
     post: Posts
+
+
+class EmployeeGet(EmployeeCreate):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+
+class EmployeeUpdate(BaseModel):
+    fullname: Optional[str] = None
+    happy_birthday: Optional[PastDate] = None
+    group: Optional[Groups] = None
+    post: Optional[Posts] = None
