@@ -20,7 +20,11 @@ class EmployeeGet(EmployeeCreate):
     updated_at: datetime
 
 
-class EmployeeUpdate(BaseModel):
+class EmployeeUpdate(EmployeeCreate):
+    pass
+
+
+class EmployeeUpdatePartial(BaseModel):
     fullname: Optional[str] = None
     happy_birthday: Optional[PastDate] = None
     group: Optional[Groups] = None

@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import Result
 from core.models import Employee
-from .schemas import EmployeeCreate, EmployeeUpdate
+from .schemas import EmployeeCreate, EmployeeUpdatePartial, EmployeeUpdate
 
 
 async def get_employees(session: AsyncSession) -> list[Employee]:
@@ -27,12 +27,17 @@ async def create_employee(session: AsyncSession, employee: EmployeeCreate) -> Em
     return employee_add
 
 
-async def update_employee(session: AsyncSession, employee: Employee, employee_upd: EmployeeUpdate):
-    for name, value in employee_upd.model_dump(exclude_defaults=True, exclude_unset=True, exclude_none=True).items():
+async def update_employee(
+        session: AsyncSession,
+        employee: Employee,
+        employee_upd: EmployeeUpdatePartial | EmployeeUpdate,
+        partial: bool = False
+):
+    for name, value in employee_upd.model_dump(exclude_unset=partial, exclude_none=partial).items():
         setattr(employee, name, value)
-        await session.commit()
-        await session.refresh(employee)
-        return employee
+    await session.commit()
+    await session.refresh(employee)
+    return employee
 
 
 async def delete_employee(session: AsyncSession, employee: Employee) -> None:

@@ -5,7 +5,7 @@ from core.database import database
 from core.models import Employee
 from . import crud
 from .dependencies import employee_by_id
-from .schemas import EmployeeGet, EmployeeCreate, EmployeeUpdate
+from .schemas import EmployeeGet, EmployeeCreate, EmployeeUpdatePartial, EmployeeUpdate
 
 employee_router = APIRouter(prefix="/employee", tags=["Сотрудник"])
 
@@ -32,8 +32,8 @@ async def get_employee_by_id(
     return employee
 
 
-@employee_router.patch("/{employee_id}/", response_model=EmployeeGet, summary="Изменить свойства «Сотрудника»")
-async def update_product(
+@employee_router.put("/{employee_id}/", response_model=EmployeeGet, summary="Изменить все свойства «Сотрудника»")
+async def update_employee(
         employee_update: EmployeeUpdate,
         employee_current: Employee = Depends(employee_by_id),
         session: AsyncSession = Depends(database.session_dependency)
@@ -41,7 +41,22 @@ async def update_product(
     return await crud.update_employee(
         session=session,
         employee=employee_current,
-        employee_upd=employee_update
+        employee_upd=employee_update,
+        partial=False
+    )
+
+
+@employee_router.patch("/{employee_id}/", response_model=EmployeeGet, summary="Изменить некоторые свойства «Сотрудника»")
+async def update_employee_partial(
+        employee_update: EmployeeUpdatePartial,
+        employee_current: Employee = Depends(employee_by_id),
+        session: AsyncSession = Depends(database.session_dependency)
+):
+    return await crud.update_employee(
+        session=session,
+        employee=employee_current,
+        employee_upd=employee_update,
+        partial=True
     )
 
 
