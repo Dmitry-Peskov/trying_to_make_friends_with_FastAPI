@@ -1,6 +1,8 @@
 import datetime
+
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.types import DateTime, String, Boolean
+from sqlalchemy.types import DateTime, String
+
 from .base import BaseModel
 
 
@@ -13,10 +15,6 @@ class Employee(BaseModel):
         DateTime,
         nullable=False
     )
-    department: Mapped[str] = mapped_column(
-        String,
-        nullable=False
-    )
     group: Mapped[str] = mapped_column(
         String,
         nullable=False
@@ -24,17 +22,4 @@ class Employee(BaseModel):
     post: Mapped[str] = mapped_column(
         String,
         nullable=False
-    )
-    email: Mapped[str] = mapped_column(
-        String,
-        nullable=False
-    )
-    phone: Mapped[str] = mapped_column(
-        String,
-        nullable=False
-    )
-    is_active: Mapped[bool] = mapped_column(
-        Boolean,
-        nullable=False,
-        default=True,
     )
