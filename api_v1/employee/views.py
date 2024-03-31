@@ -32,7 +32,7 @@ async def get_employee_by_id(
     return employee
 
 
-@employee_router.patch("/{employee_id}/", response_model=EmployeeGet)
+@employee_router.patch("/{employee_id}/", response_model=EmployeeGet, summary="Изменить свойства «Сотрудника»")
 async def update_product(
         employee_update: EmployeeUpdate,
         employee_current: Employee = Depends(employee_by_id),
@@ -45,7 +45,7 @@ async def update_product(
     )
 
 
-@employee_router.delete("/{employee_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@employee_router.delete("/{employee_id}/", status_code=status.HTTP_204_NO_CONTENT, summary="Удалить «Сотрудника»")
 async def delete_employee(
         employee: Employee = Depends(employee_by_id),
         session: AsyncSession = Depends(database.session_dependency)
